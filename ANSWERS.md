@@ -1,16 +1,16 @@
 ## How would you implement 301 redirects in Nuxt that are manageable?
 
-I’d keep a simple "Redirects" list in the CMS (or a tiny JSON file as a backup). Each row has: from, to, status (301), enabled, and optional dates. In Nuxt, a small server-side middleware checks the current path against that list and, if there’s a match, sends a 301. I’d cache the list for a few minutes so we’re not hammering the CMS, and hook up a webhook so when someone hits "Save" in the CMS, the cache clears and changes go live instantly—no deploy needed.
+I’d keep a simple "Redirects" list in the CMS (or a tiny JSON file as a backup). Each row has: from, to, status (301), enabled, and optional dates. In Nuxt, a small server-side middleware checks the current path against that list and, if there’s a match, sends a 301. I’d cache the list for a few minutes so we’re not hammering the CMS, and hook up a webhook so when someone hits "Save" in the CMS, the cache clears and changes go live instantly, no deploy needed.
 
 For safety, I’d export the same rules to the hosting layer (Vercel/Netlify/Cloudflare) during build so redirects still work even if the app has a bad day. I’d also block obvious foot-guns (loops and chains), log 404s so we can convert the frequent ones into redirects, and keep preview/staging tied to their own CMS spaces so marketing can test before going live.
 
-Net result: non-devs manage URLs, SEO stays happy, and we don’t ship hotfixes just to fix a link.
+Net result: non-devs manage URLs, SEO stays happy, and we don’t ship hot fixes just to fix a link.
 
 ## How would you monitor the application for errors?
 
 I’d set up Sentry for both the frontend and backend to catch real errors with full stack traces and release tags. That covers 90% of cases right there. For "what actually happened" before an error, I’d add LogRocket or Sentry Replay for session replays.
 
-Then a lightweight uptime monitor (Better Stack or UptimeRobot) to ping key routes, and maybe Sentry Performance or SpeedCurve for real-user performance metrics.
+Then a lightweight uptime monitor ([Better Stack](https://betterstack.com/) or [UptimeRobot](https://uptimerobot.com/)) to ping key routes, and maybe Sentry Performance or SpeedCurve for real-user performance metrics.
 
 Alerts go to Slack with clear thresholds - e.g. SSR error rate above 1%, uptime fail in 2+ regions, or big spikes in 404s.
 
@@ -26,11 +26,11 @@ Basically: Sentry for why it broke, uptime monitor for when it’s down, and Sla
 
 - Pros: zero headless CMS overhead, blazing fast, versioned in Git, cheap.
 
-- Cons: heavy non-tech editing might still feel “Git-y” unless Studio workflow fits.
+- Cons: heavy non-tech editing might still feel "Git-y" unless Studio workflow fits.
 
 2) Vue-native headless CMS
 
-- Directus (admin is Vue 3) as the headless layer; Nuxt consumes via REST/GraphQL.
+- [Directus](https://directus.io/) (admin is Vue 3) as the headless layer; Nuxt consumes via REST/GraphQL.
 
 - Pros: real roles/workflows, structured data, media library, webhooks; still Vue vibes.
 
